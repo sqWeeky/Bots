@@ -7,14 +7,21 @@ public class Taker : MonoBehaviour
 
     private Resource _resource;
 
-    public void TakeResource(string id)
+    private void Update()
     {
-        _resource = _pool.GetObgect(id, _hands);
+        if (_resource != null)
+            _resource.transform.position = _hands.position;
     }
 
-    public Resource GiveResourse()
+    public void TakeResource(string id)
+    {
+        _resource = _pool.GetObgect(id);
+        _resource.transform.position = _hands.position;
+    }
+
+    public void GiveResourse()
     {
         _pool.PutObject(_resource);
-        return _resource;
+        _resource = null;
     }
 }

@@ -8,10 +8,7 @@ public class ResourcesPool : MonoBehaviour
 
     private int _index;
     private Resource _resource;
-
     private Queue<Resource> _pool;
-
-    public IEnumerable<Resource> PooledObjects => _pool;
 
     private void Awake()
     {
@@ -33,28 +30,28 @@ public class ResourcesPool : MonoBehaviour
         return _pool.Dequeue();
     }
 
-    public Resource GetObgect(string id, Transform spawn)
+    public Resource GetObgect(string id)
     {
         _resource = null;
 
         foreach (Resource resourse in _pool)
         {
-            if (resourse.ID == id)
+            if (resourse.ID == id && resourse.IsActive == false)
             {
+                resourse.Activate();
                 resourse.gameObject.SetActive(true);
                 _resource = resourse;
+                break;
             }
-
         }
-
-        if (_resource == null)
-            _resource = GenerateObgect(spawn);
 
         return _resource;
     }
 
     public void PutObject(Resource resource)
     {
-        _pool.Enqueue(resource);        
+        resource.gameObject.SetActive(false);
+        resource.Deactivate();
+        _pool.Enqueue(resource);
     }
 }

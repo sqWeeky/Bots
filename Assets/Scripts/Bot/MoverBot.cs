@@ -1,100 +1,71 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.AI;
 
-[RequireComponent(typeof(Taker), typeof(NavMeshAgent))]
+[RequireComponent(typeof(Taker))]
 public class MoverBot : MonoBehaviour
 {
     [SerializeField] private float _speed;
-    [SerializeField] private List<Transform> _moveSpots = new();
+    [SerializeField] private Transform _storage;
+    [SerializeField] private Transform _spot;
 
-    private NavMeshAgent _navMeshAgent;
+    private Transform _target;
     private Taker _taker;
     private bool _isFree = true;
     private float _minDistanse = 1.5f;
-    private Coroutine _coroutine1;
-    private int _spawnNumber = 0;
-    //private int _storageNumber = 1;
-    private int _targetNumber = 2;
-    private int _spot = 0;
-    private int _nextSpot;
+    private string _idResourse;
 
     public bool IsFree => _isFree;
 
     private void Awake()
     {
-        _navMeshAgent = GetComponent<NavMeshAgent>();
         _taker = GetComponent<Taker>();
     }
 
     private void Start()
     {
-        transform.position = _moveSpots[_spawnNumber].transform.position;
-        _spot = _targetNumber;
+        transform.position = _spot.position;
     }
 
     public void Operate(Transform target, string id)
     {
-        _moveSpots.Add(target);
+        _idResourse = id;
+        _target = target;
         Activation();
     }
 
     private void Activation()
     {
         _isFree = false;
-        _coroutine1 = StartCoroutine(Move());
+        StartCoroutine(Move());
     }
 
     private void Disactivation()
     {
         _isFree = true;
-        //Debug.Log(_moveSpots.Count);
-        _moveSpots.RemoveAt(_targetNumber);
-
-        StopAllCoroutines();
     }
 
     private IEnumerator Move()
     {
-        Debug.Log("Бот движится " + _isFree);
-        if (_spot == _spawnNumber)
-        {
-            Disactivation();
-        }
+        yield return Run(_target);
 
-        while (Vector3.Distance(transform.position, _moveSpots[_spot].position) > _minDistanse)
-        {
-            transform.position = Vector3.MoveTowards(transform.position, _moveSpots[_spot].position, _speed * Time.deltaTime);
-            yield return null;
-        }
+        _taker.TakeResource(_idResourse);
 
+        yield return Run(_storage);
 
-        _nextSpot = _spot - 1;
-        _spot = _nextSpot % _moveSpots.Count;
+        _taker.GiveResourse();
 
-        if (_spot < 0)
-        {
-            _spot = _spawnNumber;
-        }
+        yield return Run(_spot);
 
-        StartCoroutine(Move());
-
-
-        //Debug.LogError("Корутина движения");
-        //transform.position = Vector3.MoveTowards(transform.position, target.position, _speed);
-        //_taker.TakeResource(id);
-        //transform.position = Vector3.MoveTowards(transform.position, _base.position, _speed * Time.deltaTime);
-        ////_navMeshAgent.SetDestination(_base.position);
-        //_taker.GiveResourse();
-        //transform.position = Vector3.MoveTowards(transform.position, _spot.position, _speed * Time.deltaTime);
-        //_isFree = true;
-
-
+        Disactivation();
+        yield break;
     }
 
-    private void Run(Transform target)
+    private IEnumerator Run(Transform target)
     {
-
+        while (Vector3.Distance(transform.position, target.position) >= _minDistanse)
+        {
+            transform.position = Vector3.MoveTowards(transform.position, target.position, _speed * Time.deltaTime);
+            yield return null;
+        }
     }
 }

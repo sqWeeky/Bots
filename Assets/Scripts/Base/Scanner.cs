@@ -11,11 +11,6 @@ public class Scanner : MonoBehaviour
             _resources.Add(resource);
     }
 
-    private void Update()
-    {
-        //Debug.Log(_resources.Count);
-    }
-
     public List<PointSpawn> GetResources()
     {
         return _resources;

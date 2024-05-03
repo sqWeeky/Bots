@@ -9,16 +9,16 @@ public class Storage : MonoBehaviour
 
     [SerializeField] private Text _text;    
 
-    private Resource _resource;
+    private string _idResource;
     private int _counterBottls;
     private int _counterJug;
     private int _counterRock;
 
     private void OnTriggerEnter(Collider other)
     {
-        if (other.gameObject.TryGetComponent(out Taker bot))
+        if (other.gameObject.TryGetComponent(out Resource resource))
         {
-            _resource = bot.GiveResourse();
+            _idResource = resource.ID;
             CountResource();
             OutputValue();
         }
@@ -26,7 +26,7 @@ public class Storage : MonoBehaviour
 
     private void CountResource()
     {
-        switch (_resource.ID)
+        switch (_idResource)
         {
             case CommandBottle:
                 _counterBottls++;
@@ -42,6 +42,6 @@ public class Storage : MonoBehaviour
     
     private void OutputValue()
     {
-        _text.text = $"Бутылей - {_counterBottls}; Кувшины - {_counterJug}; Камни - {_counterRock}";
+        _text.text = $"Бутыли - {_counterBottls}; Кувшины - {_counterJug}; Камни - {_counterRock}";
     }
 }

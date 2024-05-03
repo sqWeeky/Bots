@@ -3,7 +3,6 @@ using UnityEngine;
 public class PointSpawn : MonoBehaviour
 {
     [SerializeField] private ResourcesPool _pool;
-    [SerializeField] private Resource[] _resources;
 
     private bool _isOccupied;
     private Resource _resource;
@@ -35,11 +34,6 @@ public class PointSpawn : MonoBehaviour
     private void GenerationResource()
     {
         _resource = _pool.GenerateObgect(transform);
+        _resource.gameObject.SetActive(true);
     }
-
-    //public void GetResource(Resource resource)
-    //{
-    //    _resource = resource;
-    //    _isOccupied = true;
-    //}   
 }

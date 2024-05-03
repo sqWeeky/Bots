@@ -11,8 +11,6 @@ public class Base : MonoBehaviour
     private List<PointSpawn> _resources;
     private int _index;
     private int _minValue = 0;
-    //private int _maxValue = 0;
-    private Coroutine _coroutine;
 
     private void Awake()
     {
@@ -21,7 +19,6 @@ public class Base : MonoBehaviour
 
     private void Start()
     {
-        //_coroutine = StartCoroutine(Work());
         _resources = _scanner.GetResources();
     }
 
@@ -32,34 +29,18 @@ public class Base : MonoBehaviour
 
     private void Work()
     {
-        //var wait = new WaitForSeconds(_delay);
-        //yield return wait;
-
         foreach (MoverBot bot in _bots)
         {
             if (bot.IsFree == true && _resources.Count > 0)
             {
-                Debug.LogError(bot.IsFree);
-                SendBot(bot);
-                
+                SendBot(bot);                
             }
         }
-
-        //if (_resources.Count <= 0)
-        //{
-        //    StopCoroutine(_coroutine);
-        //}
-
-        //StartCoroutine(Work());
     }
 
     private void SendBot(MoverBot bot)
     {
-        Debug.Log(bot.IsFree);
-        Debug.LogError("Бот активирован");
         GenerateRandomValue();
-        //Debug.Log(_index);
-        //Debug.LogError(_resources.Count);
         bot.Operate(_resources[_index].transform, _resources[_index].Resource.ID);
         RemoveResource();
     }
