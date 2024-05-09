@@ -27,9 +27,9 @@ public class Storage : MonoBehaviour
 
     private void OnEnable()
     {
-        _creatorBot.BotCreated += SubtractResources;
+        _creatorBot.BotCreated += SubtractResourcesForBot;
         _creatorBase.TorchPut += AccumulateResources;
-        _base.BotSent += SendResources;
+        _base.BotSent += SubtractResourcesForBase;
     }
 
     private void OnTriggerEnter(Collider other)
@@ -49,9 +49,9 @@ public class Storage : MonoBehaviour
 
     private void OnDisable()
     {
-        _creatorBot.BotCreated -= SubtractResources;
+        _creatorBot.BotCreated -= SubtractResourcesForBot;
         _creatorBase.TorchPut -= AccumulateResources;
-        _base.BotSent -= SendResources;
+        _base.BotSent -= SubtractResourcesForBase;
     }
 
     private void CountResource()
@@ -91,7 +91,7 @@ public class Storage : MonoBehaviour
         }
     }
 
-    private void SendResources()
+    private void SubtractResourcesForBase()
     {
         _counterBottls -= _numberBottleForBase;
         _counterJug -= _numberJugForBase;
@@ -99,7 +99,7 @@ public class Storage : MonoBehaviour
         _creatorBot.enabled = true;
     }
 
-    private void SubtractResources()
+    private void SubtractResourcesForBot()
     {
         _counterBottls -= _numberBottleForBot;
         _counterJug -= _numberJugForBot;
