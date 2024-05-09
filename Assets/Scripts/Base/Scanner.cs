@@ -3,16 +3,22 @@ using UnityEngine;
 
 public class Scanner : MonoBehaviour
 {
-    private List<PointSpawn> _resources = new List<PointSpawn>();
+    private List<Resource> _resources = new();
+    private float _explosionRadius = 50f;    
 
-    private void OnTriggerEnter(Collider other)
+    public List<Resource> TransferResources()
     {
-        if (other.TryGetComponent(out PointSpawn resource))
-            _resources.Add(resource);
+        ScannResources();
+        return _resources;
     }
 
-    public List<PointSpawn> GetResources()
+    private void ScannResources()
     {
-        return _resources;
+        Collider[] hits = Physics.OverlapSphere(transform.position, _explosionRadius);
+
+        foreach (Collider hit in hits)
+            if (hit.gameObject.TryGetComponent(out Resource resource))
+                if (resource.IsActive == true)
+                    _resources.Add(resource);        
     }
 }

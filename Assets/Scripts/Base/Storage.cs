@@ -1,5 +1,5 @@
+using System;
 using UnityEngine;
-using UnityEngine.UI;
 
 public class Storage : MonoBehaviour
 {
@@ -7,12 +7,30 @@ public class Storage : MonoBehaviour
     const string CommandJug = "Jug";
     const string CommandRock = "Rock";
 
-    [SerializeField] private Text _text;    
+    [SerializeField] private CreatorBot _creatorBot;
+    [SerializeField] private CreatorBase _creatorBase;
+    [SerializeField] private Base _base;
 
     private string _idResource;
     private int _counterBottls;
     private int _counterJug;
-    private int _counterRock;
+    private int _counterRock = 3;
+    private int _numberRockForBase = 3;
+    private int _numberBottleForBase = 1;
+    private int _numberJugForBase = 1;
+    private int _numberJugForBot = 1;
+    private int _numberBottleForBot = 1;
+    private int _numberRockForBot = 1;
+
+    public event Action ThreeResourcesAccumulated;
+    public event Action FiveResourcesAccumulated;
+
+    private void OnEnable()
+    {
+        _creatorBot.BotCreated += SubtractResources;
+        _creatorBase.TorchPut += AccumulateResources;
+        _base.BotSent += SendResources;
+    }
 
     private void OnTriggerEnter(Collider other)
     {
@@ -20,8 +38,20 @@ public class Storage : MonoBehaviour
         {
             _idResource = resource.ID;
             CountResource();
-            OutputValue();
         }
+    }
+
+    private void Update()
+    {
+        CheckAmountOfResourcesForBot();
+        CheckAmountOfResourcesForBase();
+    }
+
+    private void OnDisable()
+    {
+        _creatorBot.BotCreated -= SubtractResources;
+        _creatorBase.TorchPut -= AccumulateResources;
+        _base.BotSent -= SendResources;
     }
 
     private void CountResource()
@@ -38,10 +68,41 @@ public class Storage : MonoBehaviour
                 _counterRock++;
                 break;
         }
-    }  
-    
-    private void OutputValue()
+    }
+
+    private void AccumulateResources()
     {
-        _text.text = $"Бутыли - {_counterBottls}; Кувшины - {_counterJug}; Камни - {_counterRock}";
+        _creatorBot.enabled = false;
+    }
+
+    private void CheckAmountOfResourcesForBot()
+    {
+        if (_counterBottls >= _numberBottleForBot && _counterJug >= _numberJugForBot && _counterRock >= _numberRockForBot)
+        {
+            ThreeResourcesAccumulated?.Invoke();
+        }
+    }
+
+    private void CheckAmountOfResourcesForBase()
+    {
+        if (_counterBottls >= _numberBottleForBase && _counterJug >= _numberJugForBase && _counterRock >= _numberRockForBase)
+        {
+            FiveResourcesAccumulated?.Invoke();
+        }
+    }
+
+    private void SendResources()
+    {
+        _counterBottls -= _numberBottleForBase;
+        _counterJug -= _numberJugForBase;
+        _counterRock -= _numberRockForBase;
+        _creatorBot.enabled = true;
+    }
+
+    private void SubtractResources()
+    {
+        _counterBottls -= _numberBottleForBot;
+        _counterJug -= _numberJugForBot;
+        _counterRock -= _numberRockForBot;
     }
 }

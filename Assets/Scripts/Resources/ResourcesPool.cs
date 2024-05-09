@@ -7,7 +7,6 @@ public class ResourcesPool : MonoBehaviour
     [SerializeField] private Resource[] _prefabs;
 
     private int _index;
-    private Resource _resource;
     private Queue<Resource> _pool;
 
     private void Awake()
@@ -23,29 +22,12 @@ public class ResourcesPool : MonoBehaviour
             var resource = Instantiate(_prefabs[_index]);
             resource.transform.parent = _container;
             resource.transform.position = spawn.position;
+            resource.Activate();
 
             return resource;
         }
 
         return _pool.Dequeue();
-    }
-
-    public Resource GetObgect(string id)
-    {
-        _resource = null;
-
-        foreach (Resource resourse in _pool)
-        {
-            if (resourse.ID == id && resourse.IsActive == false)
-            {
-                resourse.Activate();
-                resourse.gameObject.SetActive(true);
-                _resource = resourse;
-                break;
-            }
-        }
-
-        return _resource;
     }
 
     public void PutObject(Resource resource)
