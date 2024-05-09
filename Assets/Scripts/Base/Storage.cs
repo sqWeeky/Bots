@@ -14,7 +14,7 @@ public class Storage : MonoBehaviour
     private string _idResource;
     private int _counterBottls;
     private int _counterJug;
-    private int _counterRock = 3;
+    private int _counterRock;
     private int _numberRockForBase = 3;
     private int _numberBottleForBase = 1;
     private int _numberJugForBase = 1;
